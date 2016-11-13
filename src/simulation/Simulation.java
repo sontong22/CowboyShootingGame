@@ -1,12 +1,10 @@
 package simulation;
 
-import game.Cowboy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.shape.Shape;
-import physics.*;
 
 public class Simulation {
     private Box outer;
@@ -54,20 +52,7 @@ public class Simulation {
            dY = outer.height - cowboy.getRadius() - cowboy.y;
         
         cowboy.move(dX,dY);
-        /*if(player1.contains(ball.getRay().origin)) {
-            // If we have discovered that the box has just jumped on top of
-            // the ball, we nudge them apart until the box no longer
-            // contains the ball.
-            int bumpX = -1;
-            if(dX < 0) bumpX = 1;
-            int bumpY = -1;
-            if(dY < 0) bumpY = 1;
-            do {
-            player1.move(bumpX, bumpY);
-            ball.getRay().origin.x += -bumpX;
-            ball.getRay().origin.y += -bumpY;
-            } while(player1.contains(ball.getRay().origin));
-        }*/
+       
         lock.unlock();
     }
     

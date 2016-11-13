@@ -1,5 +1,5 @@
 
-package game;
+package simulation;
 
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
@@ -7,14 +7,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
 public class Cowboy {
-    private static final int  RADIUS = 10;
+    private static final int RADIUS = 10;
     public int x;
     public int y;
     boolean isDead;
     private ArrayList<Missile> missileList;
     private Circle c;
-
-    // Set outward to true if you want a box with outward pointed normals
+    
     public Cowboy(int x, int y) {
         missileList = new ArrayList<>();
         this.x = x;

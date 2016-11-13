@@ -1,5 +1,5 @@
 
-package game;
+package simulation;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -9,11 +9,11 @@ import physics.Ray;
 import physics.Vector;
 
 public class Missile {
-    int x;
-    int y;
+    private int x;
+    private int y;
     private Circle c;
     private Ray r;
-    boolean collides;
+    private boolean collides;
     
     public Missile(int x, int y, int dY){
         Vector v = new Vector(0,dY);
@@ -23,7 +23,12 @@ public class Missile {
         
         collides = false;
     }
-    public boolean collides(Cowboy player){
+    
+    public void collides(Cowboy player){
+        
+    }
+    
+    public boolean getCollision(){
         return collides;
     }
     
