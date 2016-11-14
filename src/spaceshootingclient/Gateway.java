@@ -72,9 +72,101 @@ public class Gateway implements interaction.InteractionConstants {
                 System.err.println("Error in getStartGame: InterruptedException!");
                 ex.printStackTrace();
             }
-        }
-        
+        }       
         System.out.println("Start Game");
     }
-
+    
+    public int getOpponentId(){
+        outputToServer.println(GET_OPPONENT_ID);
+        outputToServer.flush();
+        int opponentId = -1;
+        try{
+            opponentId = Integer.parseInt(inputFromServer.readLine());
+        } catch(IOException ex){
+            System.err.println("Error in getOpponentId");
+            ex.printStackTrace();            
+        }
+        return opponentId;
+    }
+    
+    
+    
+    
+    public void sendCowboyMove(Movement move){
+        outputToServer.println(SEND_COWBOY_MOVE);        
+        outputToServer.println(move);
+        outputToServer.flush();
+    }
+    
+    public int getCowboyMoveCount(){
+        outputToServer.println(GET_COWBOY_MOVE_COUNT);
+        outputToServer.flush();
+        int count = 0;
+        try{
+            count = Integer.parseInt(inputFromServer.readLine());
+        } catch(IOException ex){
+            System.err.println("Error in getCowboyMoveCount");
+            ex.printStackTrace();            
+        }
+        return count;
+    }
+    
+    public Movement getCowBoyMove(int n){
+        outputToServer.println(GET_COWBOY_MOVE);
+        outputToServer.flush();
+        int playerId = -1;
+        int x = -1;
+        int y = -1;
+        
+        try{
+            playerId = Integer.parseInt(inputFromServer.readLine());
+            x = Integer.parseInt(inputFromServer.readLine());
+            y = Integer.parseInt(inputFromServer.readLine());            
+        } catch(IOException ex){
+            System.err.println("Error in geCowboyMove!");
+            ex.printStackTrace();
+        }
+        
+        Movement move = new Movement(playerId, x, y);
+        return move;
+    }
+    
+    public void sendMissileMove(Movement move){        
+        outputToServer.println(SEND_MISSILE_MOVE);        
+        outputToServer.println(move);
+        outputToServer.flush();
+    }
+    
+    public int getMissileMoveCount(){        
+        outputToServer.println(GET_MISSILE_MOVE_COUNT);
+        outputToServer.flush();
+        int count = 0;
+        try{
+            count = Integer.parseInt(inputFromServer.readLine());
+        } catch(IOException ex){
+            System.err.println("Error in getCowboyMoveCount");
+            ex.printStackTrace();            
+        }
+        return count;
+    }
+    
+    public Movement getMissileMove(int n){       
+        outputToServer.println(GET_MISSILE_MOVE);
+        outputToServer.flush();
+        int playerId = -1;
+        int x = -1;
+        int y = -1;
+        
+        try{
+            playerId = Integer.parseInt(inputFromServer.readLine());
+            x = Integer.parseInt(inputFromServer.readLine());
+            y = Integer.parseInt(inputFromServer.readLine());            
+        } catch(IOException ex){
+            System.err.println("Error in geCowboyMove!");
+            ex.printStackTrace();
+        }
+        
+        Movement move = new Movement(playerId, x, y);
+        return move;
+    }
 }

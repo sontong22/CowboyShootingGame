@@ -8,16 +8,19 @@ import javafx.scene.shape.Shape;
 import physics.LineSegment;
 import physics.Point;
 import physics.Ray;
+import spaceshootingclient.Movement;
 
 public class Cowboy {
     public static final int RADIUS = 10;
+    public int playerId;
     public int x;
     public int y;
     boolean isDead;
     private ArrayList<Missile> missileList;
     private Circle c;
     
-    public Cowboy(int x, int y) {
+    public Cowboy(int id, int x, int y) {
+        playerId = id;
         missileList = new ArrayList<>();
         this.x = x;
         this.y = y;
@@ -53,6 +56,11 @@ public class Cowboy {
     public void move(int deltaX, int deltaY) {
         x += deltaX;
         y += deltaY;
+    }
+    
+    public Movement getCowboyPosition(){
+        Movement currentPosition = new Movement(playerId, x, y);
+        return currentPosition;
     }
 
     public void shootUp() {

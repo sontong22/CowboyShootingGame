@@ -10,11 +10,11 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import simulation.Simulation;
 
-public class SpaceShootingClient extends Application {
-    
+public class SpaceShootingClient extends Application implements interaction.InteractionConstants{    
     
     private Gateway gateway;
     private int playerID = -1;
+    private int opponentId = -1;
     
     @Override
     public void start(Stage primaryStage) {
@@ -32,31 +32,32 @@ public class SpaceShootingClient extends Application {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
             playerID = gateway.sendName(name);
+            opponentId = gateway.getOpponentId();
             gateway.getStartGame();
         });
         
         physicsdemo.GamePane root = new physicsdemo.GamePane();
-        Simulation sim = new Simulation(300, 250, 2, 2);
+        Simulation sim = new Simulation(SIMULATION_WIDTH, SIMULATION_HEIGHT, playerID, opponentId);
         root.setShapes(sim.setUpShapes());
         
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, SIMULATION_WIDTH, SIMULATION_HEIGHT);
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
-                case DOWN:
-                    sim.movePlayer(0, 9);
-                    break;
-                case UP:
-                    sim.movePlayer(0, -9);
-                    break;
-                case LEFT:
-                    sim.movePlayer(-9, 0);
-                    break;
-                case RIGHT:
-                    sim.movePlayer(9, 0);
-                    break;
-                case SPACE:
-                    sim.shootMissileUp();
-                    break;
+//                case DOWN:
+//                    sim.moveCowboy(0, 9);
+//                    break;
+//                case UP:
+//                    sim.moveCowboy(0, -9);
+//                    break;
+//                case LEFT:
+//                    sim.moveCowboy(-9, 0);
+//                    break;
+//                case RIGHT:
+//                    sim.moveCowboy(9, 0);
+//                    break;
+//                case SPACE:
+//                    sim.shootMissileUp();
+//                    break;
             }
         });
         root.requestFocus(); 
@@ -85,3 +86,32 @@ public class SpaceShootingClient extends Application {
         launch(args);
     }    
 }
+
+
+//class MovementCheck implements Runnable, interaction.InteractionConstants {
+//    private Gateway gateway; // Gateway to the server    
+//    private int N; // How many comments we have read
+//    
+//    /** Construct a thread */
+//    public MovementCheck(Gateway gateway,TextArea textArea) {
+//      this.gateway = gateway;
+//      this.textArea = textArea;
+//      this.N = 0;
+//    }
+//
+//    //Run a thread
+//    public void run() {
+//        while (true) {
+//            if (gateway.getCommentCount() > N) {
+//                String newComment = gateway.getComment(N);
+//                Platform.runLater(() -> textArea.appendText(newComment + "\n"));
+//                N++;
+//            } else {
+//                try {
+//                    Thread.sleep(250);
+//                } catch (InterruptedException ex) {
+//                }
+//            }
+//        }
+//    }
+//  }

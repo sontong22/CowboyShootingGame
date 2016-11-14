@@ -5,25 +5,28 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.shape.Shape;
+import spaceshootingclient.Movement;
 
 public class Simulation {
     private Box outer;
-    private Cowboy cowboy;
+    private Cowboy cowboyDown;
+    private Cowboy cowboyUp;
     private Lock lock;
     private ArrayList<Shape> newShapes;
     
-    public Simulation(int width,int height,int dX,int dY)
+    public Simulation(int width, int height, int cowboyDownId, int cowboyUpId)
     {
         newShapes = new ArrayList<>();
         outer = new Box(0,0,width,height,false);
-        cowboy = new Cowboy(width/2, height-20);
+        cowboyDown = new Cowboy(cowboyDownId, width/2, height-20);
+        cowboyUp = new Cowboy(cowboyUpId, width/2, 20);
         lock = new ReentrantLock();
     }
     
 //    public void evolve(double time)
 //    {
 //        lock.lock();
-//        Ray newLoc = cowboy.bounceRay(ball.getRay(), time);
+//        Ray newLoc = cowboyDown.bounceRay(ball.getRay(), time);
 //        if(newLoc != null)
 //            ball.setRay(newLoc);
 //        else {
@@ -36,51 +39,78 @@ public class Simulation {
 //        lock.unlock();
 //    }
     
-    public void movePlayer(int deltaX,int deltaY)
+    public void moveCowboyDown(int deltaX,int deltaY)
     {
         lock.lock();
         int dX = deltaX;
         int dY = deltaY;
-        if(cowboy.x + deltaX < 0)
-          dX = -cowboy.x;
-        if(cowboy.x + cowboy.RADIUS + deltaX > outer.width)
-          dX = outer.width - cowboy.RADIUS - cowboy.x;
+        if(cowboyDown.x + cowboyDown.RADIUS + deltaX < 0)
+          dX = -cowboyDown.x;
+        if(cowboyDown.x + cowboyDown.RADIUS + deltaX > outer.width)
+          dX = outer.width - cowboyDown.RADIUS - cowboyDown.x;
        
-        if(cowboy.y + deltaY < 0)
-           dY = -cowboy.y;
-        if(cowboy.y + cowboy.RADIUS + deltaY > outer.height)
-           dY = outer.height - cowboy.RADIUS - cowboy.y;
+        if(cowboyDown.y + cowboyDown.RADIUS + deltaY < 0)
+           dY = -cowboyDown.y;
+        if(cowboyDown.y + cowboyDown.RADIUS + deltaY > outer.height)
+           dY = outer.height - cowboyDown.RADIUS - cowboyDown.y;
         
-        cowboy.move(dX,dY);
+        cowboyDown.move(dX,dY);
        
         lock.unlock();
+    }
+    
+    public void moveCowboyUp(int deltaX,int deltaY)
+    {
+        lock.lock();
+        int dX = deltaX;
+        int dY = deltaY;
+        if(cowboyUp.x + cowboyUp.RADIUS + deltaX < 0)
+          dX = -cowboyUp.x;
+        if(cowboyUp.x + cowboyUp.RADIUS + deltaX > outer.width)
+          dX = outer.width - cowboyUp.RADIUS - cowboyUp.x;
+       
+        if(cowboyUp.y + cowboyUp.RADIUS + deltaY < 0)
+           dY = -cowboyUp.y;
+        if(cowboyUp.y + cowboyUp.RADIUS + deltaY > outer.height)
+           dY = outer.height - cowboyUp.RADIUS - cowboyUp.y;
+        
+        cowboyUp.move(dX,dY);
+       
+        lock.unlock();
+    }
+    
+    public Movement getCowboyPosition(int positionId){
+        if(positionId % 2 == 0)
+            return cowboyDown.getCowboyPosition();
+        else
+            return cowboyUp.getCowboyPosition();
     }
     
     public void shootMissileUp(){
         lock.lock();
-        cowboy.shootUp(); 
-        int indexMissile = cowboy.getMissileList().size() - 1;
+        cowboyDown.shootUp(); 
+        int indexMissile = cowboyDown.getMissileList().size() - 1;
         //cowboy.getMissileList().get(indexMissile).updateShape();
-        newShapes.add(cowboy.getMissileList().get(indexMissile).getShape());
+        newShapes.add(cowboyDown.getMissileList().get(indexMissile).getShape());
        
         lock.unlock();
-        System.out.print(cowboy.getMissileList().get(indexMissile));
+        System.out.print(cowboyDown.getMissileList().get(indexMissile));
     }
     
     public void shootMissileDown(){
-        cowboy.shootDown();
+        cowboyDown.shootDown();
     }        
     
     public List<Shape> setUpShapes()
     {        
         newShapes.add(outer.getShape());
-        newShapes.add(cowboy.getShape());
+        newShapes.add(cowboyDown.getShape());
      
         return newShapes;
     }
     
     public void updateShapes()
     {
-        cowboy.updateShape();
+        cowboyDown.updateShape();
     }
 }
