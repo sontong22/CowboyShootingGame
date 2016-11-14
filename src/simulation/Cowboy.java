@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import physics.LineSegment;
+import physics.Point;
+import physics.Ray;
 
 public class Cowboy {
-    private static final int RADIUS = 10;
+    public static final int RADIUS = 10;
     public int x;
     public int y;
     boolean isDead;
@@ -20,6 +23,32 @@ public class Cowboy {
         this.y = y;
         isDead=false;
     }
+    
+    public boolean hitByMissile(Ray in,double time)
+    {        
+        Point intersection = null;
+
+        LineSegment missleLine = in.toSegment(time);
+        
+        Point downLeft = new Point(x-RADIUS, y+RADIUS);
+        Point downRight = new Point(x+RADIUS, y+RADIUS);
+        Point upLeft = new Point(x-RADIUS, y-RADIUS);
+        Point upRight = new Point(x+RADIUS, y-RADIUS);
+        
+        LineSegment belowSegment = new LineSegment(downLeft, downRight);
+        LineSegment upperSegment = new LineSegment(upLeft, upRight);
+        
+        intersection = belowSegment.intersection(missleLine);
+        if (intersection != null) {
+            return true;
+        }
+        
+        intersection = upperSegment.intersection(missleLine);
+        if(intersection != null)
+            return true;
+
+        return false;
+    }
 
     public void move(int deltaX, int deltaY) {
         x += deltaX;
@@ -28,11 +57,10 @@ public class Cowboy {
 
     public void shootUp() {
         missileList.add(new Missile(this.x, this.y,10));
-        //pass len server
     }
+    
     public void shootDown() {
         missileList.add(new Missile(this.x, this.y,-10));
-        //pass len server
     }
     
     public ArrayList<Missile> getMissileList(){
@@ -45,10 +73,6 @@ public class Cowboy {
         return c;
     }
     
-    public int  getRadius(){
-        return RADIUS;
-    }
-
     public void updateShape() {
         c.setCenterX(x);
         c.setCenterY(y);

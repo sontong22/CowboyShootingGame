@@ -9,11 +9,8 @@ import physics.Ray;
 import physics.Vector;
 
 public class Missile {
-    private int x;
-    private int y;
     private Circle c;
     private Ray r;
-    private boolean collides;
     
     public Missile(int x, int y, int dY){
         Vector v = new Vector(0,dY);
@@ -21,15 +18,6 @@ public class Missile {
         
         r = new Ray(new Point(x,y), v, speed);
         
-        collides = false;
-    }
-    
-    public void collides(Cowboy player){
-        
-    }
-    
-    public boolean getCollision(){
-        return collides;
     }
     
      public Ray getRay()
@@ -48,14 +36,14 @@ public class Missile {
     }
     
     public Shape getShape() {
-        c = new Circle(x, y, 5);
-        c.setFill(Color.BLACK);
+        c = new Circle(r.origin.x,r.origin.y,4);
+        c.setFill(Color.GREEN);
         return c;
     }
     
     public void updateShape() {
-        c.setCenterX(x);
-        c.setCenterY(y);
+        c.setCenterX(r.origin.x);
+        c.setCenterY(r.origin.y);
     }
     public String toString(){
         return "Add ten lua thanh cong";

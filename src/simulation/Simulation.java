@@ -43,13 +43,13 @@ public class Simulation {
         int dY = deltaY;
         if(cowboy.x + deltaX < 0)
           dX = -cowboy.x;
-        if(cowboy.x + cowboy.getRadius() + deltaX > outer.width)
-          dX = outer.width - cowboy.getRadius() - cowboy.x;
+        if(cowboy.x + cowboy.RADIUS + deltaX > outer.width)
+          dX = outer.width - cowboy.RADIUS - cowboy.x;
        
         if(cowboy.y + deltaY < 0)
            dY = -cowboy.y;
-        if(cowboy.y + cowboy.getRadius() + deltaY > outer.height)
-           dY = outer.height - cowboy.getRadius() - cowboy.y;
+        if(cowboy.y + cowboy.RADIUS + deltaY > outer.height)
+           dY = outer.height - cowboy.RADIUS - cowboy.y;
         
         cowboy.move(dX,dY);
        
@@ -69,20 +69,13 @@ public class Simulation {
     
     public void shootMissileDown(){
         cowboy.shootDown();
-    }
+    }        
     
     public List<Shape> setUpShapes()
-    {
-        
+    {        
         newShapes.add(outer.getShape());
         newShapes.add(cowboy.getShape());
-       
-//        
-//        int numOfMissile = cowboy.getMissileList().size();
-//        for(int i = 0; i < numOfMissile; i++){
-//            newShapes.add(cowboy.getMissileList().get(i).getShape());
-//        }
-//                
+     
         return newShapes;
     }
     
