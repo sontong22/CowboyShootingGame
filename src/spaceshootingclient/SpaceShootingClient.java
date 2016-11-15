@@ -40,10 +40,10 @@ public class SpaceShootingClient extends Application implements interaction.Inte
         });
         
         GamePane root = new GamePane();
-        Simulation sim = new Simulation(300, 250, playerID, opponentId);
+        Simulation sim = new Simulation(500, 420, playerID, opponentId);
         root.setShapes(sim.setUpShapes());
         
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, 500, 420);
         
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
@@ -100,7 +100,7 @@ class CowboyMovementCheck implements Runnable, interaction.InteractionConstants 
 
     //Run a thread
     public void run() {
-        while (true) {
+        while (sim.getWhoWon() == 0) {
             sim.evolve(1.0);
             Platform.runLater(() -> {
                 sim.updateShapes();
@@ -128,6 +128,11 @@ class CowboyMovementCheck implements Runnable, interaction.InteractionConstants 
                 } catch (InterruptedException ex) {
                 }
             }
+        }
+        if(sim.getWhoWon() == 1){
+            System.err.println("YOU WON!");
+        } else{
+            System.err.println("YOU LOSE!");
         }
     }
   }

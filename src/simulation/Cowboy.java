@@ -16,7 +16,6 @@ public class Cowboy {
     public int x;
     public int y;
     public int hp;
-    public boolean isDead;
     private Circle c;
     ArrayList<LineSegment> walls;
     boolean isDown;
@@ -26,8 +25,7 @@ public class Cowboy {
         playerId = id;        
         this.x = x;
         this.y = y;
-        hp = 3;
-        isDead = false;
+        hp = 5;        
         isDown = down;
         
         Point downLeft = new Point(x-RADIUS, y+RADIUS);
@@ -58,6 +56,14 @@ public class Cowboy {
         }
         return false;
     }
+    
+    public boolean getIsDead(){
+        if(hp <= 0)
+            return true;
+        else
+            return false;
+    }
+            
                            
     public void move(int deltaX, int deltaY) {
         x += deltaX;

@@ -11,11 +11,15 @@ import physics.Vector;
 public class Missile {
     private Ray r;
     private Circle c;
+    
+    private Color color;
         
     public Missile(int x, int y, int dY){
         Vector v = new Vector(0,dY);
         double speed = v.length();        
         r = new Ray(new Point(x,y), v, speed);        
+        
+        color = Color.GREEN;
     }
     
      public Ray getRay()
@@ -33,9 +37,13 @@ public class Missile {
         r = new Ray(r.endPoint(time),r.v,r.speed);
     }
     
+    public void setColor(Color color){
+        this.color = color;
+    }
+    
     public Shape getShape() {
         c = new Circle(r.origin.x,r.origin.y,4);
-        c.setFill(Color.GREEN);
+        c.setFill(color);
         return c;
     }
     

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import spaceshootingclient.Movement;
 
 public class Simulation {
@@ -14,16 +14,37 @@ public class Simulation {
     private Cowboy cowboyUp;    
     private ArrayList<Missile> missileList;    
     private Lock lock;
+    private HpBar hpCowboyDown;
+    private HpBar hpCowboyUp;
+    private Text tDown;
+    private Text tUp;
+    
+    private boolean isPlayerUp;    
+    private int whoWon = 0; // 0: no one wins yet, 1: player wins, 2: opponent wins
     
     public Simulation(int width, int height, int playerId, int opponentId) {
         outer = new Box(0, 0, width, height);
         
-        if (playerId < opponentId) {
-            cowboyDown = new Cowboy(playerId, width / 2, height - 20, true);
-            cowboyUp = new Cowboy(opponentId, width / 2, 20, false);
+        if (playerId < opponentId) {   
+            isPlayerUp = false;
+            
+            cowboyDown = new Cowboy(playerId, width / 2, height - 40, true);
+            cowboyUp = new Cowboy(opponentId, width / 2, 40, false);
+            
+            tDown = new Text(5, height - 10, "Your Hp:");
+            tUp = new Text(5, 20, "Opponent Hp:");
+            hpCowboyDown = new HpBar(playerId, 60, height - 20);
+            hpCowboyUp = new HpBar(opponentId, 120, 10);
         } else {            
-            cowboyUp = new Cowboy(playerId, width / 2, 20, false);
-            cowboyDown = new Cowboy(opponentId, width / 2, height - 20, true);
+            isPlayerUp = true;
+            
+            cowboyUp = new Cowboy(playerId, width / 2, 40, false);
+            cowboyDown = new Cowboy(opponentId, width / 2, height - 40, true);
+            
+            tUp = new Text(5, 20, "Your Hp:");
+            tDown = new Text(5, height - 10, "Opponent Hp:");            
+            hpCowboyUp = new HpBar(playerId, 60, 10);
+            hpCowboyDown = new HpBar(opponentId, 90, height - 20);            
         }
         missileList = new ArrayList<>();
         lock = new ReentrantLock();
@@ -38,7 +59,20 @@ public class Simulation {
                 boolean hitDown = cowboyDown.hitByMissile(missileList.get(i).getRay(), time);
                 boolean hitUp = cowboyUp.hitByMissile(missileList.get(i).getRay(), time);
                 if (hitDown == true || hitUp == true) {
-                    missileList.remove(i);
+                    missileList.remove(i);                                        
+                    
+                    if(cowboyDown.getIsDead() == true){
+                        if(isPlayerUp)                         
+                            whoWon = 1;
+                        else                             
+                            whoWon = 2;                        
+                    } else if (cowboyUp.getIsDead() == true){
+                        if(isPlayerUp)                            
+                            whoWon = 2;
+                        else                             
+                            whoWon = 1;                        
+                    } 
+                    
                 } else {
                     boolean isDisappeared = outer.missileOutOfBound(missileList.get(i).getRay(), time);
                     if (isDisappeared == true) {
@@ -48,10 +82,13 @@ public class Simulation {
                     }
                 }
             }
-        }
-        lock.unlock();
+        }        
+        lock.unlock();        
     } 
-                
+             
+    public int getWhoWon(){
+        return whoWon;
+    }
     
     public void shootMissile(Movement move) {
         lock.lock();
@@ -117,6 +154,11 @@ public class Simulation {
                 shapes.add(missileList.get(i).getShape());
             }
         }
+        shapes.add(tUp);
+        shapes.add(tDown);
+        shapes.addAll(hpCowboyDown.getShape());
+        shapes.addAll(hpCowboyUp.getShape());
+        
         return shapes;
     }
     
