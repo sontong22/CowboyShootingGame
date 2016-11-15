@@ -14,10 +14,8 @@ public class Missile {
     
     public Missile(int x, int y, int dY){
         Vector v = new Vector(0,dY);
-        double speed = v.length();
-        
-        r = new Ray(new Point(x,y), v, speed);
-        
+        double speed = v.length();        
+        r = new Ray(new Point(x,y), v, speed);        
     }
     
      public Ray getRay()

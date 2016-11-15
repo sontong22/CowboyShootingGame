@@ -1,4 +1,4 @@
-package physicsdemo;
+package spaceshootingclient;
 
 import java.util.List;
 import javafx.scene.layout.Pane;

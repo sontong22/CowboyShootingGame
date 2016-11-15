@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.shape.Shape;
+import physics.Ray;
 import spaceshootingclient.Movement;
 
 public class Simulation {
@@ -12,10 +13,8 @@ public class Simulation {
     private Cowboy cowboyDown;
     private Cowboy cowboyUp;
     private Lock lock;
-    private ArrayList<Shape> newShapes;
     
     public Simulation(int width, int height, int playerId, int opponentId) {
-        newShapes = new ArrayList<>();
         outer = new Box(0, 0, width, height, false);
         
         if (playerId < opponentId) {
@@ -42,28 +41,21 @@ public class Simulation {
 //            else
 //                ball.move(time);
 //        } 
+//        
 //        lock.unlock();
 //    }
     
-//    public void moveCowboyDown(int deltaX,int deltaY)
-//    {
-//        lock.lock();
-//        int dX = deltaX;
-//        int dY = deltaY;
-//        if(cowboyDown.x + cowboyDown.RADIUS + deltaX < 0)
-//          dX = -cowboyDown.x;
-//        if(cowboyDown.x + cowboyDown.RADIUS + deltaX > outer.width)
-//          dX = outer.width - cowboyDown.RADIUS - cowboyDown.x;
-//       
-//        if(cowboyDown.y + cowboyDown.RADIUS + deltaY < 0)
-//           dY = -cowboyDown.y;
-//        if(cowboyDown.y + cowboyDown.RADIUS + deltaY > outer.height)
-//           dY = outer.height - cowboyDown.RADIUS - cowboyDown.y;
-//        
-//        cowboyDown.move(dX,dY);
-//       
-//        lock.unlock();
-//    }
+    public void evolve(double time)
+    {
+        lock.lock();
+        cowboyDown.evolve(time);
+        cowboyUp.evolve(time);
+        lock.unlock();
+    }    
+    
+    
+    
+    
     
     public void moveCowboy(Movement move)
     {
@@ -109,55 +101,6 @@ public class Simulation {
     }
     
     
-    
-//    public void moveCowboyTo(Movement move)
-//    {
-//        lock.lock();
-//        if (move.playerId == cowboyDown.playerId) {
-//            int dX = move.x;
-//            int dY = move.y;
-//            if (cowboyUp.x + cowboyUp.RADIUS + move.x < 0) {
-//                dX = -cowboyUp.x;
-//            }
-//            if (cowboyUp.x + cowboyUp.RADIUS + move.x > outer.width) {
-//                dX = outer.width - cowboyUp.RADIUS - cowboyUp.x;
-//            }
-//
-//            if (cowboyUp.y + cowboyUp.RADIUS + move.y < 0) {
-//                dY = -cowboyUp.y;
-//            }
-//            if (cowboyUp.y + cowboyUp.RADIUS + move.y > outer.height) {
-//                dY = outer.height - cowboyUp.RADIUS - cowboyUp.y;
-//            }
-//            
-//            cowboyUp.move(dX, dY);
-//        } else {
-//            int dX = move.x;
-//            int dY = move.y;
-//            if (cowboyDown.x + cowboyDown.RADIUS + move.x < 0) {
-//                dX = -cowboyDown.x;
-//            }
-//            if (cowboyDown.x + cowboyDown.RADIUS + move.x > outer.width) {
-//                dX = outer.width - cowboyDown.RADIUS - cowboyDown.x;
-//            }
-//
-//            if (cowboyDown.y + cowboyDown.RADIUS + move.y < 0) {
-//                dY = -cowboyDown.y;
-//            }
-//            if (cowboyDown.y + cowboyDown.RADIUS + move.y > outer.height) {
-//                dY = outer.height - cowboyDown.RADIUS - cowboyDown.y;
-//            }
-//
-//            cowboyDown.move(dX, dY);
-//        }
-//        lock.unlock();
-//    }
-    
-    
-    
-    
-    
-    
     public Movement getCowboyPosition(int id){
         if(id != cowboyDown.playerId)
             return cowboyDown.getCowboyPosition();
@@ -165,28 +108,35 @@ public class Simulation {
             return cowboyUp.getCowboyPosition();
     }
     
-//    public void shootMissileUp(){
-//        lock.lock();
-//        cowboyDown.shootUp(); 
-//        int indexMissile = cowboyDown.getMissileList().size() - 1;
-//        //cowboy.getMissileList().get(indexMissile).updateShape();
-//        newShapes.add(cowboyDown.getMissileList().get(indexMissile).getShape());
-//       
-//        lock.unlock();
-//        System.out.print(cowboyDown.getMissileList().get(indexMissile));
-//    }
-//    
-//    public void shootMissileDown(){
-//        cowboyDown.shootDown();
-//    }        
+    public void shootMissileUp(){
+        lock.lock();
+        cowboyDown.shootUp();         
+        lock.unlock();
+        
+    }
+    
+    public void shootMissileDown(){
+        lock.lock();
+        cowboyDown.shootDown();
+        lock.unlock();
+    }        
     
     public List<Shape> setUpShapes()
-    {        
-        newShapes.add(outer.getShape());
-        newShapes.add(cowboyDown.getShape());
-        newShapes.add(cowboyUp.getShape());
-     
-        return newShapes;
+    {         
+        ArrayList<Shape> shapes = new ArrayList<>();
+        shapes.add(outer.getShape());
+        shapes.add(cowboyDown.getShape());
+        shapes.add(cowboyUp.getShape());
+       
+        int numOfMissile = cowboyDown.getMissileList().size();
+        for (int i = 0; i < numOfMissile; i++) 
+            shapes.add(cowboyDown.getMissileList().get(i).getShape());        
+
+        numOfMissile = cowboyUp.getMissileList().size();
+        for (int i = 0; i < numOfMissile; i++) 
+            shapes.add(cowboyUp.getMissileList().get(i).getShape());        
+
+        return shapes;
     }
     
     public void updateShapes()

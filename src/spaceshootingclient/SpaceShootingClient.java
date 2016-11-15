@@ -38,7 +38,7 @@ public class SpaceShootingClient extends Application implements interaction.Inte
             opponentId = gateway.getOpponentId();
         });
         
-        physicsdemo.GamePane root = new physicsdemo.GamePane();
+        GamePane root = new GamePane();
         Simulation sim = new Simulation(SIMULATION_WIDTH, SIMULATION_HEIGHT, playerID, opponentId);
         root.setShapes(sim.setUpShapes());
         
@@ -47,72 +47,45 @@ public class SpaceShootingClient extends Application implements interaction.Inte
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
 //                case DOWN:
-//                    Movement moveDown = new Movement(playerID,0,9);
-//                    sim.moveCowboy(moveDown);
-//                    int xD = sim.getCowboyPosition(playerID).x;
-//                    int yD = sim.getCowboyPosition(playerID).y;
-//                    gateway.sendCowboyMove(xD, yD);
-//                    System.out.println("sendCowboyMove:"+playerID+" "+xD+" "+yD);
+//                    gateway.sendCowboyMove(0, 5);
 //                    break;
 //                case UP:
-//                    Movement moveUp = new Movement(playerID,0,-9);
-//                    sim.moveCowboy(moveUp);
-//                    int xU = sim.getCowboyPosition(playerID).x;
-//                    int yU = sim.getCowboyPosition(playerID).y;
-//                    gateway.sendCowboyMove(xU, yU);
-//                    System.out.println("sendCowboyMove:"+playerID+" "+xU+" "+yU);                    
+//                    gateway.sendCowboyMove(0, -5);
 //                    break;
-                case LEFT:
-                    Movement moveLeft = new Movement(playerID,-9,0);
-//                    sim.moveCowboy(moveLeft);
-//                    int xL = sim.getCowboyPosition(playerID).x;
-//                    int yL = sim.getCowboyPosition(playerID).y;
-                                        
-                    int xL =  - 9;
-                    int yL = 0;
-                    
-                    gateway.sendCowboyMove(xL, yL);
-                    System.out.println("sendCowboyMove:" + playerID + " " + xL + " " + yL);
+                case LEFT:                     
+                    gateway.sendCowboyMove(-5, 0);
                     break;
-                case RIGHT:
-                    Movement moveRight = new Movement(playerID,9,0);
-//                    sim.moveCowboy(moveRight);
-//                    int xR = sim.getCowboyPosition(playerID).x;
-//                    int yR = sim.getCowboyPosition(playerID).y;
-                    
-                    int xR = 9;
-                    int yR = 0;
-                    
-                    gateway.sendCowboyMove(xR, yR);
-                    System.out.println("sendCowboyMove:" + playerID + " " + xR + " " + yR);
-
+                case RIGHT:                   
+                    gateway.sendCowboyMove(5, 0);
                     break;
-//                case SPACE:
-//                    sim.shootMissileUp();
-//                    break;
+                case SPACE:
+                    sim.shootMissileDown();
+                    break;
             }
         });
         root.requestFocus(); 
 
-        primaryStage.setTitle("Game Physics " + playerID);
+        primaryStage.setTitle("Cowboy Wars " + playerID);
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest((event)->System.exit(0));
         primaryStage.show();
 
-//        // This is the main animation thread
-//        new Thread(() -> {
-//            while (true) {
-//        
-//                Platform.runLater(()->sim.updateShapes());
-//                try {
-//                    Thread.sleep(50);
-//                } catch (InterruptedException ex) {
-//
-//                }
-//            }
-//        }).start();
+        // This is the main animation thread
+        new Thread(() -> {
+            while (true) {
+                sim.evolve(1.0);
+                
+                
+                Platform.runLater(()->sim.updateShapes());
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ex) {
+
+                }
+            }
+        }).start();
         
-        new Thread(new CowboyMovementCheck(gateway, sim)).start();
+        new Thread(new CowboyMovementCheck(gateway, sim, root)).start();
     }
 
     
@@ -123,13 +96,15 @@ public class SpaceShootingClient extends Application implements interaction.Inte
 
 
 class CowboyMovementCheck implements Runnable, interaction.InteractionConstants {
-    private Gateway gateway;
-    private int N; 
+    private Gateway gateway;    
     private Simulation sim;
+    private GamePane root;
+    private int N; 
      
-    public CowboyMovementCheck(Gateway gateway, Simulation sim) {
+    public CowboyMovementCheck(Gateway gateway, Simulation sim, GamePane root) {
       this.gateway = gateway;
       this.sim = sim;
+      this.root = root;
       this.N = 0;
     }
 
@@ -140,7 +115,10 @@ class CowboyMovementCheck implements Runnable, interaction.InteractionConstants 
                 Movement newMove = gateway.getCowBoyMove(N);
                 sim.moveCowboy(newMove);
                     
-                Platform.runLater(()->sim.updateShapes());
+                Platform.runLater( ()->{
+                    sim.updateShapes();
+                    root.setShapes(sim.setUpShapes());}
+                );
                 
                 N++;
             } else {

@@ -2,6 +2,8 @@
 package simulation;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -16,8 +18,9 @@ public class Cowboy {
     public int x;
     public int y;
     boolean isDead;
-    private ArrayList<Missile> missileList;
+    private ArrayList<Missile> missileList;    
     private Circle c;
+    private Lock lock;
     
     public Cowboy(int id, int x, int y) {
         playerId = id;
@@ -25,6 +28,7 @@ public class Cowboy {
         this.x = x;
         this.y = y;
         isDead=false;
+        lock = new ReentrantLock();
     }
     
     public boolean hitByMissile(Ray in,double time)
@@ -52,6 +56,21 @@ public class Cowboy {
 
         return false;
     }
+    
+    
+    
+    
+    public void evolve(double time)
+    {
+        lock.lock();
+        int n = missileList.size();
+        for(int i = 0; i < n; i++)
+            missileList.get(i).move(time);
+        lock.unlock();
+    }
+
+    
+    
 
     public void move(int deltaX, int deltaY) {
         x += deltaX;
@@ -64,11 +83,11 @@ public class Cowboy {
     }
 
     public void shootUp() {
-        missileList.add(new Missile(this.x, this.y,10));
+        missileList.add(new Missile(this.x, this.y,5));
     }
     
     public void shootDown() {
-        missileList.add(new Missile(this.x, this.y,-10));
+        missileList.add(new Missile(this.x, this.y,-5));
     }
     
     public ArrayList<Missile> getMissileList(){
@@ -84,12 +103,12 @@ public class Cowboy {
     public void updateShape() {
         c.setCenterX(x);
         c.setCenterY(y);
-        
+
         int n = missileList.size();
-        for(int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             missileList.get(i).updateShape();
         }
-        
+
     }
 
 }
