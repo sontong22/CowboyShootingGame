@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 import simulation.Simulation;
 
 public class SpaceShootingClient extends Application implements interaction.InteractionConstants{    
@@ -130,8 +131,10 @@ class CowboyMovementCheck implements Runnable, interaction.InteractionConstants 
             }
         }
         if(sim.getWhoWon() == 1){
+            JOptionPane.showMessageDialog(null, "GAME OVER. YOU WON!");            
             System.err.println("YOU WON!");
         } else{
+            JOptionPane.showMessageDialog(null, "GAME OVER. YOU LOSE!");
             System.err.println("YOU LOSE!");
         }
     }
