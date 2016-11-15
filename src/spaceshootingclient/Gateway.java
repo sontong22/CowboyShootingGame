@@ -46,26 +46,27 @@ public class Gateway implements interaction.InteractionConstants {
         System.out.println("playerId: "+playerID);
         
         return playerID;
-    }
+    }        
 
     // A loop that ends after the server has found an opponent for the player
     public void getStartGame() {
 
-        boolean gameStarted = false;
+        String gameStarted = "false";
 
-        while (gameStarted == false) {
+        while (gameStarted.equalsIgnoreCase("false")) {
             outputToServer.println(GET_START_GAME);
             outputToServer.flush();
 
+            System.out.println("Waiting for opponent...");
+            
             try {
-                gameStarted = Boolean.parseBoolean(inputFromServer.readLine());
+                gameStarted = inputFromServer.readLine();
                 System.out.println("Game State: " + gameStarted);
             } catch (IOException ex) {
                 System.err.println("Error in getStartGame: IOException!");
                 ex.printStackTrace();
             }
-            System.out.println("Waiting for opponent...");
-            
+                        
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ex) {
@@ -74,27 +75,27 @@ public class Gateway implements interaction.InteractionConstants {
             }
         }       
         System.out.println("Start Game");
-    }
+    }            
     
     public int getOpponentId(){
         outputToServer.println(GET_OPPONENT_ID);
         outputToServer.flush();
-        int opponentId = -1;
+        int opponentId = 0;
         try{
             opponentId = Integer.parseInt(inputFromServer.readLine());
+            System.err.println("getOpponentId: "+opponentId);
         } catch(IOException ex){
-            System.err.println("Error in getOpponentId");
-            ex.printStackTrace();            
+            ex.printStackTrace();
         }
         return opponentId;
     }
     
     
     
-    
-    public void sendCowboyMove(Movement move){
+    public void sendCowboyMove(int x, int y){
         outputToServer.println(SEND_COWBOY_MOVE);        
-        outputToServer.println(move);
+        outputToServer.println(x);
+        outputToServer.println(y);        
         outputToServer.flush();
     }
     
@@ -108,11 +109,13 @@ public class Gateway implements interaction.InteractionConstants {
             System.err.println("Error in getCowboyMoveCount");
             ex.printStackTrace();            
         }
+        
         return count;
     }
     
     public Movement getCowBoyMove(int n){
         outputToServer.println(GET_COWBOY_MOVE);
+        outputToServer.println(n);
         outputToServer.flush();
         int playerId = -1;
         int x = -1;
@@ -128,6 +131,9 @@ public class Gateway implements interaction.InteractionConstants {
         }
         
         Movement move = new Movement(playerId, x, y);
+        
+        System.err.println("getCowboyMove: "+move);
+        
         return move;
     }
     
