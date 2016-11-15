@@ -15,24 +15,16 @@ public class Box {
     public int height;
     
     // Set outward to true if you want a box with outward pointed normals
-    public Box(int x,int y,int width,int height,boolean outward)
+    public Box(int x,int y,int width,int height)
     {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         walls = new ArrayList<>();
-        if(outward) {
-            walls.add(new LineSegment(new Point(x+width,y),new Point(x,y)));
-            walls.add(new LineSegment(new Point(x+width,y+height),new Point(x+width,y)));
-            walls.add(new LineSegment(new Point(x,y+height),new Point(x+width,y+height)));
-            walls.add(new LineSegment(new Point(x,y),new Point(x,y+height)));
-        } else {
-            walls.add(new LineSegment(new Point(x,y),new Point(x+width,y)));
-            walls.add(new LineSegment(new Point(x+width,y),new Point(x+width,y+height)));
-            walls.add(new LineSegment(new Point(x+width,y+height),new Point(x,y+height)));
-            walls.add(new LineSegment(new Point(x,y+height),new Point(x,y)));
-        }
+
+        walls.add(new LineSegment(new Point(x, y), new Point(x + width, y)));
+        walls.add(new LineSegment(new Point(x + width, y + height), new Point(x, y + height)));
     }
     
     public boolean missileOutOfBound(Ray in,double time)

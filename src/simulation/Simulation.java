@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import spaceshootingclient.Movement;
 
@@ -15,97 +16,83 @@ public class Simulation {
     private Lock lock;
     
     public Simulation(int width, int height, int playerId, int opponentId) {
-        outer = new Box(0, 0, width, height, false);
+        outer = new Box(0, 0, width, height);
         
         if (playerId < opponentId) {
-            cowboyDown = new Cowboy(playerId, width / 2, height - 20);
-            cowboyUp = new Cowboy(opponentId, width / 2, 20);
+            cowboyDown = new Cowboy(playerId, width / 2, height - 20, true);
+            cowboyUp = new Cowboy(opponentId, width / 2, 20, false);
         } else {            
-            cowboyUp = new Cowboy(playerId, width / 2, 20);
-            cowboyDown = new Cowboy(opponentId, width / 2, height - 20);
+            cowboyUp = new Cowboy(playerId, width / 2, 20, false);
+            cowboyDown = new Cowboy(opponentId, width / 2, height - 20, true);
         }
         missileList = new ArrayList<>();
         lock = new ReentrantLock();
-    }
+    }    
     
-    // Evolve the simulation through one round, advancing simulation 
-    // time by time units.
     public void evolve(double time)
     {
         lock.lock();
         if (!missileList.isEmpty()) {
-            int n = missileList.size();
-            for (int i = 0; i < n; i++) {
-//                boolean isDisappeared = cowboyDown.hitByMissile(missileList.get(i).getRay(), time);
-//                if (isDisappeared == true) {
-//                    missileList.remove(i);
-//                } else {
-//                    isDisappeared = outer.missileOutOfBound(missileList.get(i).getRay(), time);
-//                    if (isDisappeared == true) {
-//                        missileList.remove(i);
-//                    } else {
-//                        missileList.get(i).move(time);
-//                    }
-//                    missileList.get(i).move(time);
-//                }
-                missileList.get(i).move(time);
+            //int n = missileList.size();
+            for (int i = 0; i < missileList.size(); i++) {
+                boolean hitDown = cowboyDown.hitByMissile(missileList.get(i).getRay(), time);
+                boolean hitUp = cowboyUp.hitByMissile(missileList.get(i).getRay(), time);
+                if (hitDown == true || hitUp == true) {
+                    missileList.remove(i);
+                } else {
+                    boolean isDisappeared = outer.missileOutOfBound(missileList.get(i).getRay(), time);
+                    if (isDisappeared == true) {
+                        missileList.remove(i);
+                    } else {
+                        missileList.get(i).move(time);
+                    }
+                }
             }
         }
         lock.unlock();
     } 
+                
     
     public void shootMissile(Movement move) {
         lock.lock();
         
         if(move.playerId == cowboyDown.playerId)
-            missileList.add(new Missile(move.x, move.y, -5));
+            missileList.add(new Missile(move.x, move.y - Cowboy.RADIUS - 5, -5));
         else
             missileList.add(new Missile(move.x, move.y, 5));
         
         lock.unlock();
     }    
-    
+           
     // Move cowboy by the indicated amount          
     public void moveCowboy(Movement move)
     {
         lock.lock();
+        Cowboy cowboy;
         if (move.playerId == cowboyUp.playerId) {
-            int dX = move.x;
-            int dY = move.y;
-            if (cowboyUp.x + cowboyUp.RADIUS + move.x < 0) {
-                dX = -cowboyUp.x;
-            }
-            if (cowboyUp.x + cowboyUp.RADIUS + move.x > outer.width) {
-                dX = outer.width - cowboyUp.RADIUS - cowboyUp.x;
-            }
-
-            if (cowboyUp.y + cowboyUp.RADIUS + move.y < 0) {
-                dY = -cowboyUp.y;
-            }
-            if (cowboyUp.y + cowboyUp.RADIUS + move.y > outer.height) {
-                dY = outer.height - cowboyUp.RADIUS - cowboyUp.y;
-            }
-            
-            cowboyUp.move(dX, dY);
+            cowboy = cowboyUp;
         } else {
-            int dX = move.x;
-            int dY = move.y;
-            if (cowboyDown.x + cowboyDown.RADIUS + move.x < 0) {
-                dX = -cowboyDown.x;
-            }
-            if (cowboyDown.x + cowboyDown.RADIUS + move.x > outer.width) {
-                dX = outer.width - cowboyDown.RADIUS - cowboyDown.x;
-            }
-
-            if (cowboyDown.y + cowboyDown.RADIUS + move.y < 0) {
-                dY = -cowboyDown.y;
-            }
-            if (cowboyDown.y + cowboyDown.RADIUS + move.y > outer.height) {
-                dY = outer.height - cowboyDown.RADIUS - cowboyDown.y;
-            }
-
-            cowboyDown.move(dX, dY);
+            cowboy = cowboyDown;
         }
+
+        int dX = move.x;
+        int dY = move.y;
+        if (cowboy.x + Cowboy.RADIUS + move.x < 0) {
+            dX = -cowboy.x;
+        }
+        if (cowboy.x + Cowboy.RADIUS + move.x > outer.width) {
+            dX = outer.width - Cowboy.RADIUS - cowboy.x;
+        }
+
+        if (cowboy.y + Cowboy.RADIUS + move.y < 0) {
+            dY = -cowboy.y;
+        }
+        if (cowboy.y + Cowboy.RADIUS + move.y > outer.height) {
+            dY = outer.height - Cowboy.RADIUS - cowboy.y;
+        }
+
+        cowboy.move(dX, dY);
+
         lock.unlock();
     }
         
