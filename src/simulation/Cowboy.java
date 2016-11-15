@@ -1,7 +1,6 @@
 
 package simulation;
 
-import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.paint.Color;
@@ -17,17 +16,15 @@ public class Cowboy {
     public int playerId;
     public int x;
     public int y;
-    boolean isDead;
-    private ArrayList<Missile> missileList;    
+    public boolean isDead;
     private Circle c;
     private Lock lock;
     
     public Cowboy(int id, int x, int y) {
-        playerId = id;
-        missileList = new ArrayList<>();
+        playerId = id;        
         this.x = x;
         this.y = y;
-        isDead=false;
+        isDead = false;
         lock = new ReentrantLock();
     }
     
@@ -56,43 +53,18 @@ public class Cowboy {
 
         return false;
     }
-    
-    
-    
-    
-    public void evolve(double time)
-    {
-        lock.lock();
-        int n = missileList.size();
-        for(int i = 0; i < n; i++)
-            missileList.get(i).move(time);
-        lock.unlock();
-    }
-
-    
-    
-
+                           
     public void move(int deltaX, int deltaY) {
         x += deltaX;
         y += deltaY;
     }
     
     public Movement getCowboyPosition(){
-        Movement currentPosition = new Movement(playerId, x, y);
+        Movement currentPosition = new Movement(1, playerId, x, y);
         return currentPosition;
     }
 
-    public void shootUp() {
-        missileList.add(new Missile(this.x, this.y,5));
-    }
-    
-    public void shootDown() {
-        missileList.add(new Missile(this.x, this.y,-5));
-    }
-    
-    public ArrayList<Missile> getMissileList(){
-        return missileList;
-    }
+       
 
     public Shape getShape() {
         c = new Circle(x, y, RADIUS);
@@ -103,12 +75,6 @@ public class Cowboy {
     public void updateShape() {
         c.setCenterX(x);
         c.setCenterY(y);
-
-        int n = missileList.size();
-        for (int i = 0; i < n; i++) {
-            missileList.get(i).updateShape();
-        }
-
     }
 
 }

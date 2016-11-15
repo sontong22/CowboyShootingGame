@@ -9,9 +9,9 @@ import physics.Ray;
 import physics.Vector;
 
 public class Missile {
-    private Circle c;
     private Ray r;
-    
+    private Circle c;
+        
     public Missile(int x, int y, int dY){
         Vector v = new Vector(0,dY);
         double speed = v.length();        
@@ -42,8 +42,5 @@ public class Missile {
     public void updateShape() {
         c.setCenterX(r.origin.x);
         c.setCenterY(r.origin.y);
-    }
-    public String toString(){
-        return "Add ten lua thanh cong";
     }
 }

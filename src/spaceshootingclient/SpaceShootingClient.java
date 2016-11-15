@@ -3,6 +3,7 @@ package spaceshootingclient;
 
 import java.util.Optional;
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -39,10 +40,10 @@ public class SpaceShootingClient extends Application implements interaction.Inte
         });
         
         GamePane root = new GamePane();
-        Simulation sim = new Simulation(SIMULATION_WIDTH, SIMULATION_HEIGHT, playerID, opponentId);
+        Simulation sim = new Simulation(300, 250, playerID, opponentId);
         root.setShapes(sim.setUpShapes());
         
-        Scene scene = new Scene(root, SIMULATION_WIDTH, SIMULATION_HEIGHT);
+        Scene scene = new Scene(root, 300, 250);
         
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
@@ -53,13 +54,16 @@ public class SpaceShootingClient extends Application implements interaction.Inte
 //                    gateway.sendCowboyMove(0, -5);
 //                    break;
                 case LEFT:                     
-                    gateway.sendCowboyMove(-5, 0);
+                    gateway.sendMove(1, -5, 0);
                     break;
                 case RIGHT:                   
-                    gateway.sendCowboyMove(5, 0);
+                    gateway.sendMove(1, 5, 0);
                     break;
                 case SPACE:
-                    sim.shootMissileDown();
+                    int x = sim.getCowboyPosition(playerID).x;
+                    int y = sim.getCowboyPosition(playerID).y;
+                    gateway.sendMove(2, x, y);
+                    System.out.println("sendMove: " + 2 + " " + x + " " + y);
                     break;
             }
         });
@@ -70,21 +74,7 @@ public class SpaceShootingClient extends Application implements interaction.Inte
         primaryStage.setOnCloseRequest((event)->System.exit(0));
         primaryStage.show();
 
-        // This is the main animation thread
-        new Thread(() -> {
-            while (true) {
-                sim.evolve(1.0);
-                
-                
-                Platform.runLater(()->sim.updateShapes());
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException ex) {
-
-                }
-            }
-        }).start();
-        
+        // Main animation thread
         new Thread(new CowboyMovementCheck(gateway, sim, root)).start();
     }
 
@@ -111,10 +101,21 @@ class CowboyMovementCheck implements Runnable, interaction.InteractionConstants 
     //Run a thread
     public void run() {
         while (true) {
-            if (gateway.getCowboyMoveCount()> N) {
-                Movement newMove = gateway.getCowBoyMove(N);
-                sim.moveCowboy(newMove);
-                    
+            sim.evolve(1.0);
+            Platform.runLater(() -> {
+                sim.updateShapes();
+                root.setShapes(sim.setUpShapes());
+            }
+            );
+            
+            if (gateway.getMoveCount()> N) {
+                Movement newMove = gateway.getMove(N);
+                
+                if(newMove.type == 1)
+                    sim.moveCowboy(newMove);
+                else
+                    sim.shootMissile(newMove);
+                                                                    
                 Platform.runLater( ()->{
                     sim.updateShapes();
                     root.setShapes(sim.setUpShapes());}

@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.shape.Shape;
-import physics.Ray;
 import spaceshootingclient.Movement;
 
 public class Simulation {
     private Box outer;
     private Cowboy cowboyDown;
-    private Cowboy cowboyUp;
+    private Cowboy cowboyUp;    
+    private ArrayList<Missile> missileList;    
     private Lock lock;
     
     public Simulation(int width, int height, int playerId, int opponentId) {
@@ -24,43 +24,52 @@ public class Simulation {
             cowboyUp = new Cowboy(playerId, width / 2, 20);
             cowboyDown = new Cowboy(opponentId, width / 2, height - 20);
         }
-        
+        missileList = new ArrayList<>();
         lock = new ReentrantLock();
     }
     
-//    public void evolve(double time)
-//    {
-//        lock.lock();
-//        Ray newLoc = cowboyDown.bounceRay(ball.getRay(), time);
-//        if(newLoc != null)
-//            ball.setRay(newLoc);
-//        else {
-//            newLoc = outer.bounceRay(ball.getRay(), time);
-//            if(newLoc != null)
-//                ball.setRay(newLoc);
-//            else
-//                ball.move(time);
-//        } 
-//        
-//        lock.unlock();
-//    }
-    
+    // Evolve the simulation through one round, advancing simulation 
+    // time by time units.
     public void evolve(double time)
     {
         lock.lock();
-        cowboyDown.evolve(time);
-        cowboyUp.evolve(time);
+        if (!missileList.isEmpty()) {
+            int n = missileList.size();
+            for (int i = 0; i < n; i++) {
+//                boolean isDisappeared = cowboyDown.hitByMissile(missileList.get(i).getRay(), time);
+//                if (isDisappeared == true) {
+//                    missileList.remove(i);
+//                } else {
+//                    isDisappeared = outer.missileOutOfBound(missileList.get(i).getRay(), time);
+//                    if (isDisappeared == true) {
+//                        missileList.remove(i);
+//                    } else {
+//                        missileList.get(i).move(time);
+//                    }
+//                    missileList.get(i).move(time);
+//                }
+                missileList.get(i).move(time);
+            }
+        }
+        lock.unlock();
+    } 
+    
+    public void shootMissile(Movement move) {
+        lock.lock();
+        
+        if(move.playerId == cowboyDown.playerId)
+            missileList.add(new Missile(move.x, move.y, -5));
+        else
+            missileList.add(new Missile(move.x, move.y, 5));
+        
         lock.unlock();
     }    
     
-    
-    
-    
-    
+    // Move cowboy by the indicated amount          
     public void moveCowboy(Movement move)
     {
         lock.lock();
-        if (move.playerId == cowboyDown.playerId) {
+        if (move.playerId == cowboyUp.playerId) {
             int dX = move.x;
             int dY = move.y;
             if (cowboyUp.x + cowboyUp.RADIUS + move.x < 0) {
@@ -99,51 +108,44 @@ public class Simulation {
         }
         lock.unlock();
     }
-    
-    
+        
     public Movement getCowboyPosition(int id){
-        if(id != cowboyDown.playerId)
+        if(id == cowboyDown.playerId)
             return cowboyDown.getCowboyPosition();
         else
             return cowboyUp.getCowboyPosition();
-    }
+    }    
     
-    public void shootMissileUp(){
-        lock.lock();
-        cowboyDown.shootUp();         
-        lock.unlock();
-        
-    }
-    
-    public void shootMissileDown(){
-        lock.lock();
-        cowboyDown.shootDown();
-        lock.unlock();
-    }        
-    
+     // Set up the shapes to be displayed in the GUI
     public List<Shape> setUpShapes()
     {         
         ArrayList<Shape> shapes = new ArrayList<>();
         shapes.add(outer.getShape());
         shapes.add(cowboyDown.getShape());
         shapes.add(cowboyUp.getShape());
-       
-        int numOfMissile = cowboyDown.getMissileList().size();
-        for (int i = 0; i < numOfMissile; i++) 
-            shapes.add(cowboyDown.getMissileList().get(i).getShape());        
-
-        numOfMissile = cowboyUp.getMissileList().size();
-        for (int i = 0; i < numOfMissile; i++) 
-            shapes.add(cowboyUp.getMissileList().get(i).getShape());        
-
+        
+        if (!missileList.isEmpty()) {
+            int n = missileList.size();
+            for (int i = 0; i < n; i++) {
+                shapes.add(missileList.get(i).getShape());
+            }
+        }
         return shapes;
     }
     
+    // Update the GUI shapes by moving things to their correct positions
     public void updateShapes()
     {
         lock.lock();
         cowboyDown.updateShape();
         cowboyUp.updateShape();
+        
+        if (missileList.isEmpty()) {
+            int n = missileList.size();
+            for (int i = 0; i < n; i++) {
+                missileList.get(i).updateShape();
+            }
+        }
         lock.unlock();
     }
 }

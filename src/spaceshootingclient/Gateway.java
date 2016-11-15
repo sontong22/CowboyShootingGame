@@ -56,12 +56,9 @@ public class Gateway implements interaction.InteractionConstants {
         while (gameStarted.equalsIgnoreCase("false")) {
             outputToServer.println(GET_START_GAME);
             outputToServer.flush();
-
-            System.out.println("Waiting for opponent...");
             
             try {
-                gameStarted = inputFromServer.readLine();
-                System.out.println("Game State: " + gameStarted);
+                gameStarted = inputFromServer.readLine();                
             } catch (IOException ex) {
                 System.err.println("Error in getStartGame: IOException!");
                 ex.printStackTrace();
@@ -92,15 +89,16 @@ public class Gateway implements interaction.InteractionConstants {
     
     
     
-    public void sendCowboyMove(int x, int y){
-        outputToServer.println(SEND_COWBOY_MOVE);        
+    public void sendMove(int type, int x, int y){
+        outputToServer.println(SEND_MOVE);      
+        outputToServer.println(type);
         outputToServer.println(x);
         outputToServer.println(y);        
         outputToServer.flush();
     }
     
-    public int getCowboyMoveCount(){
-        outputToServer.println(GET_COWBOY_MOVE_COUNT);
+    public int getMoveCount(){
+        outputToServer.println(GET_MOVE_COUNT);
         outputToServer.flush();
         int count = 0;
         try{
@@ -113,15 +111,17 @@ public class Gateway implements interaction.InteractionConstants {
         return count;
     }
     
-    public Movement getCowBoyMove(int n){
-        outputToServer.println(GET_COWBOY_MOVE);
+    public Movement getMove(int n){
+        outputToServer.println(GET_MOVE);
         outputToServer.println(n);
         outputToServer.flush();
+        int type = -1;
         int playerId = -1;
         int x = -1;
         int y = -1;
         
         try{
+            type = Integer.parseInt(inputFromServer.readLine());
             playerId = Integer.parseInt(inputFromServer.readLine());
             x = Integer.parseInt(inputFromServer.readLine());
             y = Integer.parseInt(inputFromServer.readLine());            
@@ -130,49 +130,10 @@ public class Gateway implements interaction.InteractionConstants {
             ex.printStackTrace();
         }
         
-        Movement move = new Movement(playerId, x, y);
+        Movement move = new Movement(type, playerId, x, y);
         
-        System.err.println("getCowboyMove: "+move);
+        System.out.println("getCowboyMove: " + move);
         
         return move;
-    }
-    
-    public void sendMissileMove(Movement move){        
-        outputToServer.println(SEND_MISSILE_MOVE);        
-        outputToServer.println(move);
-        outputToServer.flush();
-    }
-    
-    public int getMissileMoveCount(){        
-        outputToServer.println(GET_MISSILE_MOVE_COUNT);
-        outputToServer.flush();
-        int count = 0;
-        try{
-            count = Integer.parseInt(inputFromServer.readLine());
-        } catch(IOException ex){
-            System.err.println("Error in getCowboyMoveCount");
-            ex.printStackTrace();            
-        }
-        return count;
-    }
-    
-    public Movement getMissileMove(int n){       
-        outputToServer.println(GET_MISSILE_MOVE);
-        outputToServer.flush();
-        int playerId = -1;
-        int x = -1;
-        int y = -1;
-        
-        try{
-            playerId = Integer.parseInt(inputFromServer.readLine());
-            x = Integer.parseInt(inputFromServer.readLine());
-            y = Integer.parseInt(inputFromServer.readLine());            
-        } catch(IOException ex){
-            System.err.println("Error in geCowboyMove!");
-            ex.printStackTrace();
-        }
-        
-        Movement move = new Movement(playerId, x, y);
-        return move;
-    }
+    }    
 }
