@@ -28,22 +28,24 @@ public class Simulation {
         if (playerId < opponentId) {   
             isPlayerUp = false;
             
-            cowboyDown = new Cowboy(playerId, width / 2, height - 40, true);
+            cowboyDown = new Cowboy(playerId, width / 2, height - 36, true);
             cowboyUp = new Cowboy(opponentId, width / 2, 40, false);
             
             tDown = new Text(5, height - 10, "Your Hp:");
-            tUp = new Text(5, 20, "Opponent Hp:");
-            hpCowboyDown = new HpBar(playerId, 60, height - 20);
-            hpCowboyUp = new HpBar(opponentId, 120, 10);
+            hpCowboyDown = new HpBar(playerId, 90, height - 20);
+            
+            tUp = new Text(5, 20, "Opponent Hp:");            
+            hpCowboyUp = new HpBar(opponentId, 90, 10);
         } else {            
             isPlayerUp = true;
             
             cowboyUp = new Cowboy(playerId, width / 2, 40, false);
-            cowboyDown = new Cowboy(opponentId, width / 2, height - 40, true);
+            cowboyDown = new Cowboy(opponentId, width / 2, height - 36, true);
             
-            tUp = new Text(5, 20, "Your Hp:");
-            tDown = new Text(5, height - 10, "Opponent Hp:");            
-            hpCowboyUp = new HpBar(playerId, 60, 10);
+            tUp = new Text(5, 20, "Your Hp:");         
+            hpCowboyUp = new HpBar(playerId, 90, 10);
+            
+            tDown = new Text(5, height - 10, "Opponent Hp:");   
             hpCowboyDown = new HpBar(opponentId, 90, height - 20);            
         }
         missileList = new ArrayList<>();
@@ -60,6 +62,12 @@ public class Simulation {
                 boolean hitUp = cowboyUp.hitByMissile(missileList.get(i).getRay(), time);
                 if (hitDown == true || hitUp == true) {
                     missileList.remove(i);                                        
+                    
+                    if(hitDown == true)
+                        hpCowboyDown.reduceHp();
+                    
+                    if(hitUp == true)
+                        hpCowboyUp.reduceHp();
                     
                     if(cowboyDown.getIsDead() == true){
                         if(isPlayerUp)                         
@@ -175,6 +183,10 @@ public class Simulation {
                 missileList.get(i).updateShape();
             }
         }
+        
+        hpCowboyDown.updateShape();
+        hpCowboyUp.updateShape();
+        
         lock.unlock();
     }
 }

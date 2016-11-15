@@ -40,8 +40,12 @@ public class HpBar{
         }                  
     }
     
+    public void reduceHp(){
+        hp--;
+    }
+    
     public void drawHpBar(){                
-        hpBar = new Rectangle(x, y, PIXELS_PER_VALUE*hp, HEIGHT);
+        hpBar = new Rectangle(x, y, PIXELS_PER_VALUE * hp, HEIGHT);
         hpBar.setFill(Color.GREEN);
         hpBar.setStroke(Color.BLACK);
                

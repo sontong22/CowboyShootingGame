@@ -3,7 +3,6 @@ package spaceshootingclient;
 
 import java.util.Optional;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -55,7 +54,7 @@ public class SpaceShootingClient extends Application implements interaction.Inte
 //                    gateway.sendCowboyMove(0, -5);
 //                    break;
                 case LEFT:                     
-                    gateway.sendMove(1, -5, 0);
+                    gateway.sendMove(1, -10, 0);
                     break;
                 case RIGHT:                   
                     gateway.sendMove(1, 5, 0);
