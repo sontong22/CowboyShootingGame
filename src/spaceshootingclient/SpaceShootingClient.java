@@ -55,10 +55,10 @@ public class SpaceShootingClient extends Application implements interaction.Inte
                     gateway.sendMove(1, 0, -5);
                     break;
                 case LEFT:                     
-                    gateway.sendMove(1, -4, 0);
+                    gateway.sendMove(1, -5, 0);
                     break;
                 case RIGHT:                   
-                    gateway.sendMove(1, 4, 0);
+                    gateway.sendMove(1, 5, 0);
                     break;
                 case SPACE:
                     int x = sim.getCowboyPosition(playerID).x;
