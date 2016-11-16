@@ -17,13 +17,14 @@ public class HpBar{
     public int hp;    
     private Rectangle border;
     private Rectangle hpBar;    
+    private Color color;
     
-    
-    public HpBar(int id, int x, int y) {        
+    public HpBar(int id, int x, int y, Color c) {        
         playerId = id;        
         this.x = x;
         this.y = y;
         this.hp = 5;                
+        color = c;
                                 
         border = new Rectangle(this.x, this.y , WIDTH, HEIGHT);
         border.setFill(Color.WHITE);
@@ -46,7 +47,7 @@ public class HpBar{
     
     public void drawHpBar(){                
         hpBar = new Rectangle(x, y, PIXELS_PER_VALUE * hp, HEIGHT);
-        hpBar.setFill(Color.GREEN);
+        hpBar.setFill(color);
         hpBar.setStroke(Color.BLACK);
                
     }

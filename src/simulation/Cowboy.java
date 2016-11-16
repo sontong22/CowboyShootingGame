@@ -19,14 +19,16 @@ public class Cowboy {
     private Circle c;
     ArrayList<LineSegment> walls;
     boolean isDown;
+    Color color;
     
-    public Cowboy(int id, int x, int y, boolean down) {
+    public Cowboy(int id, int x, int y, boolean down, Color color) {
         walls = new ArrayList<>();
         playerId = id;        
         this.x = x;
         this.y = y;
         hp = 5;        
         isDown = down;
+        this.color = color;
         
         Point downLeft = new Point(x-RADIUS, y+RADIUS);
         Point downRight = new Point(x+RADIUS, y+RADIUS);
@@ -100,7 +102,7 @@ public class Cowboy {
 
     public Shape getShape() {
         c = new Circle(x, y, RADIUS);
-        c.setFill(Color.ORANGE);
+        c.setFill(color);
         return c;
     }
     

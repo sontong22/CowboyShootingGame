@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import spaceshootingclient.Movement;
@@ -28,29 +29,29 @@ public class Simulation {
         if (playerId < opponentId) {   
             isPlayerUp = false;
             
-            cowboyDown = new Cowboy(playerId, width / 2, height - 36, true);
-            cowboyUp = new Cowboy(opponentId, width / 2, 40, false);
+            cowboyDown = new Cowboy(playerId, width / 2, height - 36, true, Color.GREEN);
+            cowboyUp = new Cowboy(opponentId, width / 2, 40, false, Color.ORANGE);
             
             tDown = new Text(5, height - 10, "Your Hp:");
-            hpCowboyDown = new HpBar(playerId, 90, height - 20);
+            hpCowboyDown = new HpBar(playerId, 90, height - 20, Color.GREEN);
             
             tUp = new Text(5, 20, "Opponent Hp:");            
-            hpCowboyUp = new HpBar(opponentId, 90, 10);
+            hpCowboyUp = new HpBar(opponentId, 90, 10, Color.ORANGE);
         } else {            
             isPlayerUp = true;
             
-            cowboyUp = new Cowboy(playerId, width / 2, 40, false);
-            cowboyDown = new Cowboy(opponentId, width / 2, height - 36, true);
+            cowboyUp = new Cowboy(playerId, width / 2, 40, false, Color.GREEN);
+            cowboyDown = new Cowboy(opponentId, width / 2, height - 36, true, Color.ORANGE);
             
             tUp = new Text(5, 20, "Your Hp:");         
-            hpCowboyUp = new HpBar(playerId, 90, 10);
+            hpCowboyUp = new HpBar(playerId, 90, 10, Color.GREEN);
             
             tDown = new Text(5, height - 10, "Opponent Hp:");   
-            hpCowboyDown = new HpBar(opponentId, 90, height - 20);            
+            hpCowboyDown = new HpBar(opponentId, 90, height - 20, Color.ORANGE);            
         }
         missileList = new ArrayList<>();
         lock = new ReentrantLock();
-    }    
+    }     
     
     public void evolve(double time)
     {

@@ -47,14 +47,14 @@ public class SpaceShootingClient extends Application implements interaction.Inte
         
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
-//                case DOWN:
-//                    gateway.sendCowboyMove(0, 5);
-//                    break;
-//                case UP:
-//                    gateway.sendCowboyMove(0, -5);
-//                    break;
+                case DOWN:
+                    gateway.sendMove(1, 0, 5);
+                    break;
+                case UP:
+                    gateway.sendMove(1, 0, -5);
+                    break;
                 case LEFT:                     
-                    gateway.sendMove(1, -10, 0);
+                    gateway.sendMove(1, -5, 0);
                     break;
                 case RIGHT:                   
                     gateway.sendMove(1, 5, 0);
