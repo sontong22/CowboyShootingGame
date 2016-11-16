@@ -28,7 +28,7 @@ public class HpBar{
                                 
         border = new Rectangle(this.x, this.y , WIDTH, HEIGHT);
         border.setFill(Color.WHITE);
-        border.setStroke(Color.BLACK); 
+        border.setStroke(color); 
         setHp(5);
     }
     
@@ -48,7 +48,7 @@ public class HpBar{
     public void drawHpBar(){                
         hpBar = new Rectangle(x, y, PIXELS_PER_VALUE * hp, HEIGHT);
         hpBar.setFill(color);
-        hpBar.setStroke(Color.BLACK);
+        hpBar.setStroke(color);
                
     }
 

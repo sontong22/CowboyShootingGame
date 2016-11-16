@@ -51,7 +51,7 @@ public class Simulation {
         }
         missileList = new ArrayList<>();
         lock = new ReentrantLock();
-    }     
+    }    
     
     public void evolve(double time)
     {
@@ -114,31 +114,45 @@ public class Simulation {
     public void moveCowboy(Movement move)
     {
         lock.lock();
-        Cowboy cowboy;
-        if (move.playerId == cowboyUp.playerId) {
-            cowboy = cowboyUp;
+        
+        if (move.playerId == cowboyDown.playerId) {
+            int dX = move.x;
+            int dY = move.y;
+            if (cowboyDown.x + Cowboy.RADIUS + move.x < 0) {
+                dX = -cowboyDown.x;
+            }
+            if (cowboyDown.x + Cowboy.RADIUS + move.x > outer.width) {
+                dX = outer.width - Cowboy.RADIUS - cowboyDown.x;
+            }
+
+            if (cowboyDown.y + Cowboy.RADIUS + move.y < outer.height*3/5) {
+                dY =0;
+            }
+            if (cowboyDown.y + Cowboy.RADIUS + move.y > outer.height) {
+                dY = 0;
+            }
+
+            cowboyDown.move(dX, dY);
         } else {
-            cowboy = cowboyDown;
-        }
+            int dX = move.x;
+            int dY = move.y;
+            if (cowboyUp.x + Cowboy.RADIUS + move.x < 0) {
+                dX = -cowboyUp.x;
+            }
+            if (cowboyUp.x + Cowboy.RADIUS + move.x > outer.width) {
+                dX = outer.width - Cowboy.RADIUS - cowboyUp.x;
+            }
 
-        int dX = move.x;
-        int dY = move.y;
-        if (cowboy.x + Cowboy.RADIUS + move.x < 0) {
-            dX = -cowboy.x;
-        }
-        if (cowboy.x + Cowboy.RADIUS + move.x > outer.width) {
-            dX = outer.width - Cowboy.RADIUS - cowboy.x;
-        }
+            if (cowboyUp.y + Cowboy.RADIUS + move.y < 2*Cowboy.RADIUS) {
+                dY = 0;
+            }
+            if (cowboyUp.y + Cowboy.RADIUS + move.y > outer.height*2/5) {
+                dY = 0;
+            }
 
-        if (cowboy.y + Cowboy.RADIUS + move.y < 0) {
-            dY = -cowboy.y;
-        }
-        if (cowboy.y + Cowboy.RADIUS + move.y > outer.height) {
-            dY = outer.height - Cowboy.RADIUS - cowboy.y;
-        }
+            cowboyUp.move(dX, dY);
 
-        cowboy.move(dX, dY);
-
+        }
         lock.unlock();
     }
         

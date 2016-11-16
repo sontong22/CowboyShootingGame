@@ -3,6 +3,7 @@ package spaceshootingclient;
 
 import java.util.Optional;
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -54,10 +55,10 @@ public class SpaceShootingClient extends Application implements interaction.Inte
                     gateway.sendMove(1, 0, -5);
                     break;
                 case LEFT:                     
-                    gateway.sendMove(1, -5, 0);
+                    gateway.sendMove(1, -4, 0);
                     break;
                 case RIGHT:                   
-                    gateway.sendMove(1, 5, 0);
+                    gateway.sendMove(1, 4, 0);
                     break;
                 case SPACE:
                     int x = sim.getCowboyPosition(playerID).x;
@@ -132,9 +133,11 @@ class CowboyMovementCheck implements Runnable, interaction.InteractionConstants 
         if(sim.getWhoWon() == 1){
             JOptionPane.showMessageDialog(null, "GAME OVER. YOU WON!");            
             System.err.println("YOU WON!");
+            System.exit(0);
         } else{
             JOptionPane.showMessageDialog(null, "GAME OVER. YOU LOSE!");
             System.err.println("YOU LOSE!");
+            System.exit(0);
         }
     }
   }

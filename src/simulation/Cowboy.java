@@ -68,9 +68,17 @@ public class Cowboy {
             
                            
     public void move(int deltaX, int deltaY) {
-        x += deltaX;
-        y += deltaY;
-        
+        if (deltaX == 0) {            
+            if(deltaY > 0)
+                y  = y + deltaY + (5-hp)*2;
+            else
+                y = y + deltaY - (5-hp)*2;
+        } else if(deltaY == 0){
+            if(deltaX > 0)
+                x = x + deltaX + (5-hp)*2;
+            else
+                x = x + deltaX - (5-hp)*2;
+        }
         
         Point downLeft = new Point(x-RADIUS, y+RADIUS);
         Point downRight = new Point(x+RADIUS, y+RADIUS);
